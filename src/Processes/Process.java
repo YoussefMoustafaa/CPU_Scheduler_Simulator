@@ -5,6 +5,7 @@ public class Process {
     protected int arrivalTime;
     protected int burstTime;
     protected int remainingTime;
+    private boolean completed;
 
 
     public Process(String name, int arrivalTime, int burstTime) {
@@ -33,6 +34,16 @@ public class Process {
     public int DecreaseRemainingTime(int currentWorkTime) {
         this.remainingTime -= currentWorkTime;
         return remainingTime;
+    }
+
+        public boolean isCompleted() 
+    { 
+        return completed;
+    }
+
+    public void setCompleted(boolean completed)
+    { 
+        this.completed = completed;
     }
 
 }
