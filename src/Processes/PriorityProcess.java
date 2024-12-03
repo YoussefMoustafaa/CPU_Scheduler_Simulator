@@ -1,4 +1,5 @@
 package Processes;
+
 public class PriorityProcess extends Process {
     private int priority;
 
@@ -10,5 +11,5 @@ public class PriorityProcess extends Process {
     public int getPriority() {
         return priority;
     }
-
+    
 }
