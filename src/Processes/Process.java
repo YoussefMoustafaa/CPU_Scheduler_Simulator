@@ -5,7 +5,9 @@ public class Process {
     protected int arrivalTime;
     protected int burstTime;
     protected int remainingTime;
-    private boolean completed;
+    protected boolean completed;
+    protected int waitTime;
+    protected int turnaroundTime;
 
 
     public Process(String name, int arrivalTime, int burstTime) {
@@ -13,6 +15,8 @@ public class Process {
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.remainingTime = burstTime;
+        this.waitTime = 0;
+        this.turnaroundTime = 0;
     }
 
     public String getName() { 
@@ -44,6 +48,22 @@ public class Process {
     public void setCompleted(boolean completed)
     { 
         this.completed = completed;
+    }
+
+    public int getWaitTime() {
+        return waitTime;
+    }
+
+    public void setWaitTime(int waitTime) {
+        this.waitTime = waitTime;
+    }
+
+    public int getTurnaroundTime() {
+        return turnaroundTime;
+    }
+
+    public void setTurnaroundTime(int turnaroundTime) {
+        this.turnaroundTime = turnaroundTime;
     }
 
 }
