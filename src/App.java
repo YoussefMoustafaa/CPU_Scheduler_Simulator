@@ -14,11 +14,11 @@ public class App {
         Process p5 = new Process("P5", 4, 4);
 
         List<Process> processList = new ArrayList<>();
-        processList.add(p1);
-        processList.add(p2);
-        processList.add(p3);
-        processList.add(p4);
-        processList.add(p5);
+        // processList.add(p1);
+        // processList.add(p2);
+        // processList.add(p3);
+        // processList.add(p4);
+        // processList.add(p5);
 
         Scanner scanner = new Scanner(System.in);
 
@@ -30,7 +30,9 @@ public class App {
         System.out.println("3. Shortest-Remaining Time First (SRTF) Scheduling");
         System.out.println("4. FCAI Scheduling");
         int type = scanner.nextInt();
-
+        
+        System.out.println("Choose number of processes: ");
+        int numProcesses = scanner.nextInt();
    
         switch (type) {
             case 1:
@@ -38,8 +40,20 @@ public class App {
                 break;
             }
             case 2: {
+                System.out.println("Write process  'Name, Arrival time, Burst time' ");   
+                String input = scanner.nextLine();
+                System.out.println(input);
+                // for (int i = 0; i < numProcesses; i++) {
+                //     String[] parts = input.split(", ");
+                //     if (parts.length < 3) {
+                //         System.out.println("Error: Please provide all three values (Name, Arrival time, Burst time).");
+                //         continue; // or handle the error appropriately
+                //     }
+                //     Process p = new Process(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                //     processList.add(p);
+                // }
                 scheduler.setStrategy(new SJFScheduling()); 
-                scheduler.executeSchedule(processList);     
+                scheduler.executeSchedule(processList);  
                 break;
             }
             case 3: {
