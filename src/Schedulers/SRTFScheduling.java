@@ -1,3 +1,4 @@
+
 package Schedulers;
 
 import Processes.Process;
@@ -6,7 +7,9 @@ import java.util.List;
 
 public class SRTFScheduling implements SchedulingStrategy {
     @Override
-    public void schedule(List<Process> processes) {
+    public void schedule(List<Process> processes) 
+    {
+        List<Process> readyQueue = new ArrayList<>();
         int currentTime = 0;
         int totalProcesses = processes.size();
         int totalWaitingTime = 0;
@@ -16,54 +19,55 @@ public class SRTFScheduling implements SchedulingStrategy {
         // Define context switch time directly
         int contextSwitchTime = 1;
 
-        List<Process> executionOrder = new ArrayList<>();
-        
         while (completed < totalProcesses) {
-            Process selectedProcess = null;
-
-            // Find process with the shortest remaining time available at currentTime
+            // Add processes that have arrived to the ready queue
             for (Process process : processes) {
-                if (process.getArrivalTime() <= currentTime && process.getRemainingTime() > 0) {
-                    // Select the process with the shortest remaining time
-                    if (selectedProcess == null || process.getRemainingTime() < selectedProcess.getRemainingTime()) {
-                        selectedProcess = process;
-                    }
-                    // Handle tie: Choose process with earlier arrival time if remaining times are equal
-                    else if (process.getRemainingTime() == selectedProcess.getRemainingTime() &&
-                             process.getArrivalTime() < selectedProcess.getArrivalTime()) {
-                        selectedProcess = process;
-                    }
+                if (process.getArrivalTime() <= currentTime && !process.isCompleted()) {
+                    readyQueue.add(process);
                 }
             }
 
             // If no process is ready, increment time
-            if (selectedProcess == null) {
+            if (readyQueue.isEmpty()) {
                 currentTime++;
                 continue;
             }
 
+            // Find process with the shortest remaining time in the ready queue
+            Process shortestJob = readyQueue.get(0);
+            for (Process process : readyQueue) {
+                if (process.getRemainingTime() < shortestJob.getRemainingTime()) {
+                    shortestJob = process;
+                }
+            }
+
+            // Remove the shortest job from the ready queue
+            readyQueue.remove(shortestJob);
+
             // Add context switching time if switching between processes
-            if (!executionOrder.isEmpty() && executionOrder.get(executionOrder.size() - 1) != selectedProcess) {
+            if (completed > 0) {
                 currentTime += contextSwitchTime;
             }
 
             // Execute the selected process for 1 unit of time
-            executionOrder.add(selectedProcess);
-            selectedProcess.DecreaseRemainingTime(1);
+            shortestJob.DecreaseRemainingTime(1);
             currentTime++;
 
             // Check if process is completed
-            if (selectedProcess.getRemainingTime() == 0) {
+            if (shortestJob.getRemainingTime() == 0) {
                 completed++;
-                int waitingTime = currentTime - selectedProcess.getArrivalTime() - selectedProcess.getBurstTime();
-                int turnaroundTime = currentTime - selectedProcess.getArrivalTime();
+                int waitingTime = currentTime - shortestJob.getArrivalTime() - shortestJob.getBurstTime();
+                int turnaroundTime = currentTime - shortestJob.getArrivalTime();
 
                 totalWaitingTime += waitingTime;
                 totalTurnaroundTime += turnaroundTime;
 
-                System.out.println("Process " + selectedProcess.getName() + " completed:");
+                System.out.println("Process " + shortestJob.getName() + " completed:");
                 System.out.println("Waiting Time: " + waitingTime);
                 System.out.println("Turnaround Time: " + turnaroundTime);
+            } else {
+                // If the process is not completed, add it back to the ready queue
+                readyQueue.add(shortestJob);
             }
         }
     }
