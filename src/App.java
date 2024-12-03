@@ -30,10 +30,10 @@ public class App {
         System.out.println("2. Shortest-Job First (SJF) Scheduling");
         System.out.println("3. Shortest-Remaining Time First (SRTF) Scheduling");
         System.out.println("4. FCAI Scheduling");
-        int type = reader.read();
+        int type = Integer.parseInt(reader.readLine());
         
         System.out.println("Choose number of processes: ");
-        int numProcesses = reader.read();
+        int numProcesses = Integer.parseInt(reader.readLine());
 
    
         switch (type) {
