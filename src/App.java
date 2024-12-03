@@ -1,8 +1,8 @@
+import Processes.Process;
+import Schedulers.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import Processes.Process;
-import Schedulers.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -37,6 +37,7 @@ public class App {
         switch (type) {
             case 1:
             {
+                
                 break;
             }
             case 2: {
