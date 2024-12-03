@@ -1,4 +1,4 @@
 
 public class ContextSwitch {
-    static int contextSwitchTime;
+    static int contextSwitchTime = 1;
 }

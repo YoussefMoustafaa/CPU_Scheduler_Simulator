@@ -40,7 +40,7 @@ public class Process {
         return remainingTime;
     }
 
-        public boolean isCompleted() 
+    public boolean isCompleted() 
     { 
         return completed;
     }

@@ -1,39 +1,36 @@
-
 package Schedulers;
 
+import contextSwitch.ContextSwitch;
 import Processes.Process;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SRTFScheduling implements SchedulingStrategy {
     @Override
-    public void schedule(List<Process> processes) 
-    {
+    public void schedule(List<Process> processes) {
         List<Process> readyQueue = new ArrayList<>();
+        List<String> execution = new ArrayList<>();
+
         int currentTime = 0;
+        int completed = 0;
         int totalProcesses = processes.size();
         int totalWaitingTime = 0;
         int totalTurnaroundTime = 0;
-        int completed = 0;
 
-        // Define context switch time directly
-        int contextSwitchTime = 1;
+        Process previousProcess = null;
 
         while (completed < totalProcesses) {
-            // Add processes that have arrived to the ready queue
             for (Process process : processes) {
-                if (process.getArrivalTime() <= currentTime && !process.isCompleted()) {
+                if (process.getArrivalTime() <= currentTime && !readyQueue.contains(process) && !process.isCompleted()) {
                     readyQueue.add(process);
                 }
             }
-
-            // If no process is ready, increment time
+            
             if (readyQueue.isEmpty()) {
                 currentTime++;
                 continue;
             }
 
-            // Find process with the shortest remaining time in the ready queue
             Process shortestJob = readyQueue.get(0);
             for (Process process : readyQueue) {
                 if (process.getRemainingTime() < shortestJob.getRemainingTime()) {
@@ -41,34 +38,57 @@ public class SRTFScheduling implements SchedulingStrategy {
                 }
             }
 
-            // Remove the shortest job from the ready queue
-            readyQueue.remove(shortestJob);
-
-            // Add context switching time if switching between processes
-            if (completed > 0) {
-                currentTime += contextSwitchTime;
+            // Add context switch time if switching processes
+            if (previousProcess != null && !previousProcess.equals(shortestJob)) {
+                currentTime += ContextSwitch.contextSwitchTime;
+                execution.add("Context switch at time " + (currentTime - ContextSwitch.contextSwitchTime));
             }
 
-            // Execute the selected process for 1 unit of time
+            // Execute the shortest job for 1 unit of time
+            int startTime = currentTime;
             shortestJob.DecreaseRemainingTime(1);
             currentTime++;
+            previousProcess = shortestJob;
+
+            // Log execution
+            execution.add("Process " + shortestJob.getName() + " executed from " + startTime + " to " + currentTime);
 
             // Check if process is completed
             if (shortestJob.getRemainingTime() == 0) {
+                shortestJob.setCompleted(true);
+                readyQueue.remove(shortestJob);
                 completed++;
+
+                // Calculate waiting and turnaround times
                 int waitingTime = currentTime - shortestJob.getArrivalTime() - shortestJob.getBurstTime();
                 int turnaroundTime = currentTime - shortestJob.getArrivalTime();
 
-                totalWaitingTime += waitingTime;
-                totalTurnaroundTime += turnaroundTime;
+                shortestJob.setWaitTime(waitingTime);
+                shortestJob.setTurnaroundTime(turnaroundTime);
 
-                System.out.println("Process " + shortestJob.getName() + " completed:");
-                System.out.println("Waiting Time: " + waitingTime);
-                System.out.println("Turnaround Time: " + turnaroundTime);
-            } else {
-                // If the process is not completed, add it back to the ready queue
-                readyQueue.add(shortestJob);
+                // Aggregate totals
+                totalWaitingTime += shortestJob.getWaitTime();
+                totalTurnaroundTime += shortestJob.getTurnaroundTime();
             }
         }
+
+        // Output results
+        System.out.println("Execution Log:");
+        for (String logged : execution) {
+            System.out.println(logged);
+        }
+
+        System.out.println("\nProcess Results:");
+        for (Process process : processes) {
+            System.out.println("Process " + process.getName() +
+                               ": Waiting Time = " + process.getWaitTime() +
+                               ", Turnaround Time = " + process.getTurnaroundTime());
+        }
+
+        // Output averages
+        double avgWaitingTime = (double) totalWaitingTime / totalProcesses;
+        double avgTurnaroundTime = (double) totalTurnaroundTime / totalProcesses;
+        System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime);
     }
 }
