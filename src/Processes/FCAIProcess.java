@@ -15,6 +15,10 @@ public class FCAIProcess extends Process {
         return quantum;
     }
 
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
+    }
+
     public int getFCAIScore() {
         return FCAIScore;
     }

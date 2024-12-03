@@ -77,8 +77,21 @@ public class App {
                 break;
             }
             case 3: {
-
+                System.out.println("Write process  'Name, Arrival time, Burst time' ");   
+                for (int i = 0; i < numProcesses; i++) {
+                    String input = reader.readLine();
+                    String[] parts = input.split(", ");
+                    if (parts.length < 3) {
+                        System.out.println("Error: Please provide all three values (Name, Arrival time, Burst time).");
+                        continue; // or handle the error appropriately
+                    }
+                    Process p = new Process(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                    processList.add(p);
+                }
+                scheduler.setStrategy(new SRTFScheduling()); 
+                scheduler.executeSchedule(processList);  
                 break;
+
             }
             case 4: {
                 System.out.println("Write process  'Name, Arrival time, Burst time, Priority, Quantum' ");   
