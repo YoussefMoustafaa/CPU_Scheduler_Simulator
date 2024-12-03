@@ -1,9 +1,12 @@
+import Processes.FCAIProcess;
+import Processes.PriorityProcess;
+import Processes.Process;
+import Schedulers.*;
+import contextSwitch.ContextSwitch;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import Processes.Process;
-import Schedulers.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -39,6 +42,22 @@ public class App {
         switch (type) {
             case 1:
             {
+                System.out.println("Write process  'Name, Arrival time, Burst time, Priority' ");   
+                for (int i = 0; i < numProcesses; i++) {
+                    String input = reader.readLine();
+                    String[] parts = input.split(", ");
+                    if (parts.length < 4) {
+                        System.out.println("Error: Please provide all three values (Name, Arrival time, Burst time , Priority).");
+                        continue;
+                    }
+                    PriorityProcess p = new PriorityProcess(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),Integer.parseInt(parts[3]));
+                    processList.add(p);
+                }
+                System.out.println("Enter Context Switch Time: ");
+                int contextSwitchTime = Integer.parseInt(reader.readLine());
+                ContextSwitch.contextSwitchTime = contextSwitchTime;
+                scheduler.setStrategy(new PriorityScheduling()); 
+                scheduler.executeSchedule(processList);   
                 break;
             }
             case 2: {
@@ -48,7 +67,7 @@ public class App {
                     String[] parts = input.split(", ");
                     if (parts.length < 3) {
                         System.out.println("Error: Please provide all three values (Name, Arrival time, Burst time).");
-                        continue; // or handle the error appropriately
+                        continue;
                     }
                     Process p = new Process(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
                     processList.add(p);
@@ -75,7 +94,17 @@ public class App {
 
             }
             case 4: {
-
+                System.out.println("Write process  'Name, Arrival time, Burst time, Priority, Quantum' ");   
+                for (int i = 0; i < numProcesses; i++) {
+                    String input = reader.readLine();
+                    String[] parts = input.split(", ");
+                    if (parts.length < 5) {
+                        System.out.println("Error: Please provide all five values (Name, Arrival time, Burst time, Priority, Quantum).");
+                        continue;
+                    }
+                    Process p = new FCAIProcess(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
+                    processList.add(p);
+                }
                 break;
             }
             default: {
