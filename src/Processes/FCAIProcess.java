@@ -4,11 +4,11 @@ public class FCAIProcess extends Process {
     private int quantum;
     private int FCAIScore;
 
-    public FCAIProcess(String name, int arrivalTime, int burstTime, int priority, int quantum, int FCAIScore) {
+    public FCAIProcess(String name, int arrivalTime, int burstTime, int priority, int quantum) {
         super(name, arrivalTime, burstTime);
         this.priority = priority;
         this.quantum = quantum;
-        this.FCAIScore = FCAIScore;
+        this.FCAIScore = 0;
     }
 
     public int getQuantum() {
