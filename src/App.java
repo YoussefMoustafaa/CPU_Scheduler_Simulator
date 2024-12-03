@@ -1,3 +1,4 @@
+import Processes.FCAIProcess;
 import Processes.PriorityProcess;
 import Processes.Process;
 import Schedulers.*;
@@ -66,7 +67,7 @@ public class App {
                     String[] parts = input.split(", ");
                     if (parts.length < 3) {
                         System.out.println("Error: Please provide all three values (Name, Arrival time, Burst time).");
-                        continue; // or handle the error appropriately
+                        continue;
                     }
                     Process p = new Process(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
                     processList.add(p);
@@ -80,7 +81,17 @@ public class App {
                 break;
             }
             case 4: {
-
+                System.out.println("Write process  'Name, Arrival time, Burst time, Priority, Quantum' ");   
+                for (int i = 0; i < numProcesses; i++) {
+                    String input = reader.readLine();
+                    String[] parts = input.split(", ");
+                    if (parts.length < 5) {
+                        System.out.println("Error: Please provide all five values (Name, Arrival time, Burst time, Priority, Quantum).");
+                        continue;
+                    }
+                    Process p = new FCAIProcess(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
+                    processList.add(p);
+                }
                 break;
             }
             default: {
