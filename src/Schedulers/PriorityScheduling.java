@@ -15,50 +15,39 @@ public class PriorityScheduling implements SchedulingStrategy {
         int currentTime = 0;
         int totalTurnaroundTime=0;
         int totalWaitTime=0;
-        for (Process p : processes) {
-            if(p instanceof PriorityProcess){
-                PriorityProcess pp = (PriorityProcess) p;
-                if(p.getArrivalTime() == 0){
-                    if (currentTime < p.getArrivalTime()) {
-                        currentTime = p.getArrivalTime();
-                    }
-                    pp.setWaitTime(currentTime - pp.getArrivalTime());
-                    currentTime+=p.getBurstTime();
-                    // current time become a completetion time
-                    pp.setTurnaroundTime(currentTime-pp.getArrivalTime());
 
-                     System.out.println(p.getName() + " executes from " + currentTime + " to " + (currentTime + p.getBurstTime()) );
+        processes.sort(Comparator.comparingInt(Process::getArrivalTime)
+                .thenComparingInt(p -> ((PriorityProcess) p).getPriority()));
 
-
-                    currentTime+=context;
-                    totalTurnaroundTime += pp.getTurnaroundTime();
-                    totalWaitTime += pp.getWaitTime();
-                }
-                else {
-                    if (pp.getArrivalTime() > 0) {
-                        remainingProcesses.add(pp);
-                    }
-                }
+        for (int i =0; i<processes.size() ;i++) {
+            PriorityProcess pp = (PriorityProcess) processes.get(i);
+            if(i==0){
+                currentTime = Math.max(currentTime, pp.getArrivalTime());
+                pp.setWaitTime(currentTime - pp.getArrivalTime());
+                currentTime+=pp.getBurstTime();
+                // current time become a completetion time
+                pp.setTurnaroundTime(currentTime-pp.getArrivalTime());
+                System.out.println(pp.getName() + " executes from " + (currentTime-pp.getBurstTime()) + " to " + currentTime);
+                currentTime+=context;
+                totalTurnaroundTime += pp.getTurnaroundTime();
+                totalWaitTime += pp.getWaitTime();
             }
+            else {
+                remainingProcesses.add(pp);
+            }   
         }
-
         remainingProcesses.sort(
             Comparator.comparingInt(PriorityProcess::getPriority)
                       .thenComparingInt(PriorityProcess::getArrivalTime)
         );
 
-        
-
         for (PriorityProcess p : remainingProcesses) {
-            if (currentTime < p.getArrivalTime()) {
-                currentTime = p.getArrivalTime();
-            }
-
+            currentTime = Math.max(currentTime, p.getArrivalTime());
             p.setWaitTime(currentTime - p.getArrivalTime());
             // current time become a completetion time
             currentTime += p.getBurstTime(); 
             p.setTurnaroundTime(currentTime - p.getArrivalTime());
-            System.out.println(p.getName() + " executes from " + currentTime + " to " + (currentTime + p.getBurstTime()));
+            System.out.println(p.getName() + " executes from " + (currentTime - p.getBurstTime()) + " to " + currentTime);
 
             currentTime+=+context;
             totalTurnaroundTime += p.getTurnaroundTime();
@@ -67,10 +56,8 @@ public class PriorityScheduling implements SchedulingStrategy {
 
         System.out.println("\n");
         for (Process p : processes) {
-            if (p instanceof PriorityProcess) {
                 PriorityProcess pp = (PriorityProcess) p;
                 System.out.println(pp.getName() + ": wait time: " + pp.getWaitTime() + ", turnaround time: " + pp.getTurnaroundTime());
-            }
         }
         int totalProcesses = processes.size();
         double avgTurnaroundTime = (double) totalTurnaroundTime / totalProcesses;
