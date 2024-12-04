@@ -105,6 +105,8 @@ public class App {
                     Process p = new FCAIProcess(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
                     processList.add(p);
                 }
+                scheduler.setStrategy(new FCAIScheduling()); 
+                scheduler.executeSchedule(processList);  
                 break;
             }
             default: {
