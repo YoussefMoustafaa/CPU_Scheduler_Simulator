@@ -70,4 +70,14 @@ public class Process {
         this.burstTime = burstTime;
     }
 
+    public int getStarvationFactor() 
+    {
+        return starvationFactor;
+    }
+
+    public void incrementStarvationFactor() 
+    {
+        this.starvationFactor++;
+    }
+
 }
