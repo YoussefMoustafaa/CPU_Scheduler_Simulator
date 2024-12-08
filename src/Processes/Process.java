@@ -1,7 +1,12 @@
 package Processes;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Process {
     protected String name;
+    protected Color color;
     protected int arrivalTime;
     protected int burstTime;
     protected int remainingTime;
@@ -9,6 +14,7 @@ public class Process {
     protected int waitTime;
     protected int turnaroundTime;
     protected int starvationFactor; //to solve starvation problem
+    protected List<Integer> startTimes;
 
     public Process(String name, int arrivalTime, int burstTime)
      {
@@ -19,10 +25,16 @@ public class Process {
         this.waitTime = 0;
         this.turnaroundTime = 0;
         this.starvationFactor = 0; 
+        this.color = null;
+        this.startTimes = new ArrayList<>();
     }
 
     public String getName() {
         return name;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public int getArrivalTime() {
@@ -70,6 +82,10 @@ public class Process {
         this.burstTime = burstTime;
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public int getStarvationFactor() 
     {
         return starvationFactor;
@@ -78,6 +94,22 @@ public class Process {
     public void incrementStarvationFactor() 
     {
         this.starvationFactor++;
+    }
+
+    public void addTime(int time) {
+        startTimes.add(time);
+    }
+
+    public void setStartTimes(List<Integer> startTimes) {
+        this.startTimes = startTimes;
+    }
+
+    public List<Integer> getStartTimes() {
+        return startTimes;
+    }
+
+    public void clearStartTimes() {
+        this.startTimes.clear();
     }
 
 }

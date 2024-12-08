@@ -28,6 +28,8 @@ public class PriorityScheduling implements SchedulingStrategy {
                 // current time become a completetion time
                 pp.setTurnaroundTime(currentTime-pp.getArrivalTime());
                 System.out.println(pp.getName() + " executes from " + (currentTime-pp.getBurstTime()) + " to " + currentTime);
+                pp.addTime(currentTime-pp.getBurstTime());
+                pp.addTime(currentTime);
                 currentTime+=context;
                 totalTurnaroundTime += pp.getTurnaroundTime();
                 totalWaitTime += pp.getWaitTime();
@@ -48,7 +50,8 @@ public class PriorityScheduling implements SchedulingStrategy {
             currentTime += p.getBurstTime(); 
             p.setTurnaroundTime(currentTime - p.getArrivalTime());
             System.out.println(p.getName() + " executes from " + (currentTime - p.getBurstTime()) + " to " + currentTime);
-
+            p.addTime(currentTime - p.getBurstTime());
+            p.addTime(currentTime);
             currentTime+=+context;
             totalTurnaroundTime += p.getTurnaroundTime();
             totalWaitTime += p.getWaitTime();
