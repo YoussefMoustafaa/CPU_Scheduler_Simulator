@@ -1,25 +1,48 @@
-# Process Scheduling Application
-
-A Java application designed to manage and simulate process scheduling. The application allows users to define various processes with attributes like arrival time, burst time, priority, and quantum, while supporting different process types and scheduling methods.
+# CPU Scheduling Simulator
 
 ---
 
-## Features
+## Overview
 
-- **Process Management**:
-  - Add processes with attributes: Name, Arrival Time, Burst Time, Priority, and Quantum.
-  - Support for extended process types through inheritance (`PriorityProcess`, `FCAIProcess`).
+The **CPU Scheduling Simulator** is a project designed to simulate how different CPU scheduling algorithms manage processes in an operating system. It provides a visual interface where users can interact with the simulation, see the order in which processes are executed, and observe a Gantt chart that shows the execution timeline. This project helps users understand how CPU scheduling works and how different algorithms handle processes based on their characteristics.
 
-- **Input Options**:
-  - Accepts process data from user input or pre-defined strings.
-  - Reads data line by line, supports multi-line input parsing.
+---
 
-- **GUI (Optional)**:
-  - Includes Swing-based input interfaces with support for integer inputs using components like `JSpinner`.
+## Key Features
 
-- **Flexibility**:
-  - Dynamic list handling for processes.
-  - Processes can be created, sorted, and manipulated easily.
+- **Four CPU Scheduling Algorithms**: The simulator supports four popular scheduling algorithms:
+  - **Priority Scheduling**: Processes are executed based on priority, with the highest priority executed first.
+  - **Shortest Job First (SJF)**: The process with the shortest burst time (execution time) is chosen first.
+  - **Shortest Remaining Time First (SRTF)**: A preemptive version of SJF, where the process with the shortest remaining burst time is executed first.
+  - **FCAI Scheduling**: A more advanced algorithm that uses a custom "FCAI Score" to determine the execution order of processes.
+
+- **Interactive Graphical User Interface (GUI)**:  
+  The simulator includes a user-friendly GUI where users can input processes, specify their arrival times, burst times, and priorities, and then run the simulation to see how the CPU handles these processes. The interface includes:
+  - A table displaying the processes with their details (arrival time, burst time, priority, etc.).
+  - A Gantt chart to visually represent the timeline of process executions.
+
+- **Real-time Scheduling and Visualization**:  
+  The processes are visualized in real-time as they are scheduled by the algorithm. A Gantt chart displays the process execution order and how long each process runs.
+
+- **Wait Time and Turnaround Time**:  
+  For each process, the simulator calculates and displays two important metrics:
+  - **Wait Time**: The amount of time a process has been in the ready queue waiting to be executed.
+  - **Turnaround Time**: The total time from the arrival of the process to its completion (including wait time and burst time).
+
+## How It Works
+
+1. **Input**: Users can enter the details of multiple processes (name, arrival time, burst time, priority) into the system.
+2. **Execution**: When the user clicks "Run", the selected CPU scheduling algorithm begins processing the tasks. The processes are executed one by one based on the algorithm's rules.
+3. **Visualization**: As processes are scheduled, the Gantt chart updates in real-time to show the execution order.
+4. **Results**: Once the simulation is complete, the wait time and turnaround time for each process are displayed.
+
+---
+
+## Technologies Used
+
+- **Java**: The project is developed in Java, utilizing object-oriented programming concepts for clean, maintainable code.
+- **Swing**: Java Swing is used for building the GUI (Graphical User Interface) to make the simulator interactive.
+- **Collections (Queue, List, LinkedList)**: These are used to manage processes and their scheduling, ensuring that processes are handled efficiently as they arrive and get executed.
 
 ---
 
@@ -28,31 +51,12 @@ A Java application designed to manage and simulate process scheduling. The appli
 1. Ensure you have **Java 8 or higher** installed.
 2. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/your-repo.git
+   git clone https://github.com/YoussefMoustafaa/CPU_Scheduler_Simulator.git
    ```
 3. Navigate to the project directory:
    ```bash
-   cd your-repo
+   cd CPU_Scheduler_Simulator
    ```
-
----
-
-## How to Run
-
-### Command Line
-1. Compile the code:
-   ```bash
-   javac -d bin src/*.java
-   ```
-2. Run the program:
-   ```bash
-   java -cp bin Main
-   ```
-
-### Using an IDE
-1. Open the project in your preferred IDE (e.g., IntelliJ IDEA, Eclipse, VS Code).
-2. Set up the project structure.
-3. Run the `Main` class.
 
 ---
 
@@ -67,28 +71,15 @@ p4, 29, 4, 8, 2
 
 ---
 
-## Contributing
+## Why This Project is Useful
 
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature/your-feature
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add your message"
-   ```
-4. Push the branch:
-   ```bash
-   git push origin feature/your-feature
-   ```
-5. Open a pull request.
+This simulator allows you to understand and compare how different CPU scheduling algorithms behave under varying conditions. By visualizing the process scheduling and execution, users can see how the algorithms impact system performance, including metrics like wait time and turnaround time. This is an excellent tool for learning about operating system concepts and CPU management.
 
 ---
 
-## License
+## Conclusion
 
-This project is licensed under the [MIT License](LICENSE).
+This project demonstrates the use of fundamental operating system concepts in a practical, interactive way. It showcases my ability to design and implement complex algorithms, build a user-friendly interface, and visualize real-time data effectively. Whether you're learning about CPU scheduling or looking to see how these algorithms work in practice, this simulator provides a clear and engaging way to explore these important concepts.
 
 ---
 
@@ -97,12 +88,3 @@ This project is licensed under the [MIT License](LICENSE).
 - Inspired by scheduling algorithms and process management concepts.
 - Developed with ❤️ and Java.
 
----
-
-## Contact
-
-For questions or feedback, feel free to reach out:
-
-- **Name**: Your Name  
-- **Email**: your.email@example.com  
-- **GitHub**: [YourUsername](https://github.com/your-username)
