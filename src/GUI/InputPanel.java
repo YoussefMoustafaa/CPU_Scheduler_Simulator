@@ -39,7 +39,7 @@ public class InputPanel extends JPanel {
 
     private List<Process> processes = new ArrayList<>();
 
-    public InputPanel(TaskTablePanel taskTablePanel, GanttChartImproved ganttChart) {
+    public InputPanel(TaskTablePanel taskTablePanel, GanttChart ganttChart) {
         this.taskTablePanel = taskTablePanel;
         this.selectedAlgorithm = "Priority Scheduling";
         // this.ganttChart = ganttChart;

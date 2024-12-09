@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-import GUI.GanttChartImproved;
+import GUI.GanttChart;
 import GUI.InputPanel;
 import GUI.TaskTablePanel;
 import Schedulers.FCAIScheduling;
@@ -24,15 +24,18 @@ public class CPUSchedulerGUI extends JFrame {
         
         
         TaskTablePanel taskTablePanel = new TaskTablePanel();
-        GanttChartImproved ganttChart = new GanttChartImproved();
+        GanttChart ganttChart = new GanttChart();
         InputPanel inputPanel = new InputPanel(taskTablePanel, ganttChart);
 
+        ganttChart.setPreferredSize(new Dimension(2000, 400));
+
         JScrollPane ganttScrollPane = new JScrollPane(ganttChart);
-        ganttScrollPane.setPreferredSize(new Dimension(600, 600)); // Optional: Control initial visible area
+        ganttScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        ganttScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
         // Place Gantt Chart and Table in a horizontal split pane
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, taskTablePanel, ganttScrollPane);
-        splitPane.setResizeWeight(0.2); // Allocate 40% space to the table initially
+        splitPane.setResizeWeight(0.3); // Allocate 40% space to the table initially
         splitPane.setDividerLocation(400); // Divider position at 400px
         splitPane.setDividerSize(5);
 

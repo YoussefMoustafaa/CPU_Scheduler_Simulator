@@ -112,4 +112,8 @@ public class Process {
         this.startTimes.clear();
     }
 
+    public void setStarvationFactor(int starvationFactor) {
+        this.starvationFactor = starvationFactor;
+    }
+
 }

@@ -6,11 +6,11 @@ import java.util.List;
 
 import Processes.Process;
 
-public class GanttChartImproved extends JPanel {
+public class GanttChart extends JPanel {
 
     private List<Process> processes = new ArrayList<>();
 
-    public GanttChartImproved() {
+    public GanttChart() {
 
         // this.processes = processList;
         // Process p1 = new Process("P1", 0, 3);
@@ -69,7 +69,7 @@ public class GanttChartImproved extends JPanel {
 
         // Time settings
         int timeScale = 50; // Width of one time unit
-        int totalTime = 20; // Total time units
+        int totalTime = 35; // Total time units
 
         // Draw time scale
         g2d.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -112,7 +112,7 @@ public class GanttChartImproved extends JPanel {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Gantt Chart Improved");
-        GanttChartImproved chart = new GanttChartImproved();
+        GanttChart chart = new GanttChart();
         // chart.updateGanttChart();
         frame.add(chart);
         frame.setSize(800, 400);

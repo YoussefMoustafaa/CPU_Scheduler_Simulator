@@ -32,6 +32,8 @@ public class TaskTablePanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(taskTable);
         scrollPane.setPreferredSize(new Dimension(1000, 80));
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
     }
 
@@ -40,10 +42,7 @@ public class TaskTablePanel extends JPanel {
     }
 
     public void clearTable() {
-        System.out.println(tableModel.getRowCount());
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            tableModel.removeRow(i);
-        }
+        tableModel.setRowCount(0);
     }
 
     private static class ColorRenderer extends JLabel implements TableCellRenderer {

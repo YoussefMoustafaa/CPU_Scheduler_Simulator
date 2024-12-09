@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SRTFScheduling implements SchedulingStrategy {
+    private static final int STARVATION_THRESHOLD = 10; 
+
     @Override
     public void schedule(List<Process> processes) {
         List<Process> readyQueue = new ArrayList<>();
@@ -19,6 +21,9 @@ public class SRTFScheduling implements SchedulingStrategy {
 
         Process previousProcess = null;
 
+        // int[] waitingTimes = new int[processes.size()];
+
+
         while (completed < totalProcesses) {
             for (Process process : processes) {
                 if (process.getArrivalTime() <= currentTime && !readyQueue.contains(process) && !process.isCompleted()) {
@@ -31,9 +36,23 @@ public class SRTFScheduling implements SchedulingStrategy {
                 continue;
             }
 
-            Process shortestJob = readyQueue.get(0);
             for (Process process : readyQueue) {
-                if (process.getRemainingTime() < shortestJob.getRemainingTime()) {
+                if (!process.equals(previousProcess)) {
+                    process.incrementStarvationFactor();
+                }
+            }
+
+            Process forcedProcess = null;
+            for (Process process : readyQueue) {
+                if (process.getStarvationFactor() > STARVATION_THRESHOLD) {
+                    forcedProcess = process;
+                break;
+                }
+            }
+
+            Process shortestJob = (forcedProcess != null) ? forcedProcess : readyQueue.get(0);
+            for (Process process : readyQueue) {
+                if (forcedProcess == null && process.getRemainingTime() < shortestJob.getRemainingTime()) {
                     shortestJob = process;
                 }
             }
@@ -50,29 +69,32 @@ public class SRTFScheduling implements SchedulingStrategy {
             currentTime++;
             previousProcess = shortestJob;
 
-            // Log execution
+            
             execution.add("Process " + shortestJob.getName() + " executed from " + startTime + " to " + currentTime);
-
-            // Check if process is completed
+            shortestJob.addTime(startTime);
+            shortestJob.addTime(currentTime);
+            
             if (shortestJob.getRemainingTime() == 0) {
                 shortestJob.setCompleted(true);
                 readyQueue.remove(shortestJob);
                 completed++;
 
-                // Calculate waiting and turnaround times
+                // Reset starvation factor
+                shortestJob.setStarvationFactor(0);
+                
                 int waitingTime = currentTime - shortestJob.getArrivalTime() - shortestJob.getBurstTime();
                 int turnaroundTime = currentTime - shortestJob.getArrivalTime();
 
                 shortestJob.setWaitTime(waitingTime);
                 shortestJob.setTurnaroundTime(turnaroundTime);
 
-                // Aggregate totals
+                
                 totalWaitingTime += shortestJob.getWaitTime();
                 totalTurnaroundTime += shortestJob.getTurnaroundTime();
             }
         }
 
-        // Output results
+        
         System.out.println("Execution Log:");
         for (String logged : execution) {
             System.out.println(logged);
@@ -85,7 +107,7 @@ public class SRTFScheduling implements SchedulingStrategy {
                                ", Turnaround Time = " + process.getTurnaroundTime());
         }
 
-        // Output averages
+        
         double avgWaitingTime = (double) totalWaitingTime / totalProcesses;
         double avgTurnaroundTime = (double) totalTurnaroundTime / totalProcesses;
         System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
