@@ -31,7 +31,7 @@ public class InputPanel extends JPanel {
     private CardLayout cardLayout;
     private Set<Color> usedColors = new HashSet<>();
     private Color selectedColor = null;
-    private String selectedAlgorithm = "Priority Scheduling";
+    private String selectedAlgorithm;
 
     private JPanel PriorityPanel;
     private JPanel SJFPanel;
@@ -41,6 +41,7 @@ public class InputPanel extends JPanel {
 
     public InputPanel(TaskTablePanel taskTablePanel, GanttChartImproved ganttChart) {
         this.taskTablePanel = taskTablePanel;
+        this.selectedAlgorithm = "Priority Scheduling";
         // this.ganttChart = ganttChart;
 
         setLayout(new BorderLayout(2, 2));
@@ -52,9 +53,17 @@ public class InputPanel extends JPanel {
         cardPanel = new JPanel(cardLayout);
 
         PriorityPanelInput();
-        ShortestTimePanelInput("SJF");
-        ShortestTimePanelInput("SRTF");
+        SJFPanelInput();
+        SRTFPanelInput();
         FCAIPanelInput();
+
+        add(cardPanel, BorderLayout.CENTER);
+
+        // Single action listener for the schedulerComboBox
+        schedulerComboBox.addActionListener(e -> {
+            selectedAlgorithm = (String) schedulerComboBox.getSelectedItem();
+            cardLayout.show(cardPanel, selectedAlgorithm);
+        });
 
     }
 
@@ -96,14 +105,14 @@ public class InputPanel extends JPanel {
             }
         });
 
-        JButton addProcessButton = new JButton("Add Process");
+        JButton addPriorityProcessButton = new JButton("Add Process");
 
         JLabel statusLabel = new JLabel(" ");
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         statusLabel.setForeground(Color.BLUE); 
 
 
-        addProcessButton.addActionListener(e -> {
+        addPriorityProcessButton.addActionListener(e -> {
             try {
 
                 if (arrivalField.getText().isEmpty() || nameField.getText().isEmpty() || burstField.getText().isEmpty() || priorityField.getText().isEmpty() || selectedColor == null) {
@@ -132,6 +141,7 @@ public class InputPanel extends JPanel {
                 colorDisplay.setText("");
                 statusLabel.setText("Process added!");
                 statusLabel.setForeground(Color.BLUE);
+                // usedColors.clear();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid input for Priority Scheduler.");
             }
@@ -140,9 +150,10 @@ public class InputPanel extends JPanel {
         
         PriorityPanel.add(colorButton);
         PriorityPanel.add(colorDisplay);
-        PriorityPanel.add(addProcessButton);
+        PriorityPanel.add(addPriorityProcessButton);
         // PriorityPanel.add(statusLabel);
 
+        // Context Switch Button
         JLabel contextSwitchLabel = new JLabel("Context Switch");
         PriorityPanel.add(contextSwitchLabel);
         JTextField contextSwitchField = new JTextField();
@@ -157,49 +168,16 @@ public class InputPanel extends JPanel {
             ContextSwitch.contextSwitchTime = contextSwitch;
             contextSwitchField.setText("");
             contextSwitchLabel.setText("Context Switch: " + contextSwitch);
-        });
-
-        // JButton runButton = new JButton("Run");
-        // runButton.addActionListener(e -> {
-        //     Scheduler scheduler = new Scheduler();
-        //     // reset start times for gantt chart
-        //     for (Process process : processes) {
-        //         process.clearStartTimes();
-        //     }
-        //     switch (selectedAlgorithm) {
-        //         case "Priority Scheduling":
-        //             scheduler.setStrategy(new PriorityScheduling()); 
-        //             scheduler.executeSchedule(processes);
-        //             break;
-        //         case "SJF":
-        //             break;
-        //         case "SRTF":
-        //             break;
-        //         case "FCAI":
-        //             break;
-        //         default:
-        //             break;
-        //     }
-        //     ganttChart.updateGanttChart(processes);
-        // });
-        // PriorityPanel.add(runButton);
-        
+        });        
 
         cardPanel.add(PriorityPanel, "Priority Scheduling");
-
-        add(cardPanel, BorderLayout.CENTER);
-
-
-        schedulerComboBox.addActionListener(e -> {
-            String selectedAlgorithm = (String) schedulerComboBox.getSelectedItem();
-            cardLayout.show(cardPanel, selectedAlgorithm);
-
-            
-        });
     }
 
-    private void ShortestTimePanelInput(String algorithmType) {
-        SJFPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+    private void SJFPanelInput() {
+
+        // TODO: Clear Process Table
+
+        SJFPanel = new JPanel(new GridLayout(0, 4, 10, 10));
 
         SJFPanel.add(new JLabel("Process Name"));
         JTextField nameField = new JTextField();
@@ -233,9 +211,6 @@ public class InputPanel extends JPanel {
         });
 
         JButton addProcessButton = new JButton("Add Process");
-        JLabel statusLabel = new JLabel(" ");
-        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        statusLabel.setForeground(Color.BLUE); 
 
         addProcessButton.addActionListener(e -> {
             try {
@@ -251,8 +226,9 @@ public class InputPanel extends JPanel {
 
                 Process process = new Process(name, arrival, burst);
                 process.setColor(selectedColor);
-
                 processes.add(process);
+
+                taskTablePanel.addProcess(name, arrival, burst, selectedColor);
 
                 // reset inputs
                 nameField.setText("");
@@ -261,9 +237,7 @@ public class InputPanel extends JPanel {
                 selectedColor = null;
                 colorDisplay.setBackground(Color.LIGHT_GRAY);
                 colorDisplay.setText("");
-                usedColors.clear();
-                statusLabel.setText("Process added!");
-                statusLabel.setForeground(Color.BLUE);
+                // usedColors.clear();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid input for Shortest Job Scheduler.");
             }
@@ -272,22 +246,111 @@ public class InputPanel extends JPanel {
         SJFPanel.add(colorButton);
         SJFPanel.add(colorDisplay);
         SJFPanel.add(addProcessButton);
-        SJFPanel.add(statusLabel);
 
-        cardPanel.add(SJFPanel, algorithmType);
-
-        add(cardPanel, BorderLayout.CENTER);
-
-
-        schedulerComboBox.addActionListener(e -> {
-            String selectedAlgorithm = (String) schedulerComboBox.getSelectedItem();
-            cardLayout.show(cardPanel, selectedAlgorithm);
-
-
-        });
+        cardPanel.add(SJFPanel, "SJF");
     }
 
+    private void SRTFPanelInput() {
+
+        // TODO: Clear Process Table
+
+        SJFPanel = new JPanel(new GridLayout(0, 4, 10, 10));
+
+        SJFPanel.add(new JLabel("Process Name"));
+        JTextField nameField = new JTextField();
+        SJFPanel.add(nameField);
+
+        SJFPanel.add(new JLabel("Arrival Time"));
+        JTextField arrivalField = new JTextField();
+        SJFPanel.add(arrivalField);
+
+        SJFPanel.add(new JLabel("Burst Time"));
+        JTextField burstField = new JTextField();
+        SJFPanel.add(burstField);
+
+        JButton colorButton = new JButton("Pick Color");
+        JLabel colorDisplay = new JLabel("");
+        colorDisplay.setOpaque(true);
+        colorDisplay.setBackground(Color.LIGHT_GRAY);
+
+        colorButton.addActionListener(e -> {
+            Color pickedColor = JColorChooser.showDialog(this, "Pick a Process Color", Color.WHITE);
+            if (pickedColor != null) {
+                if (usedColors.contains(pickedColor)) {
+                    JOptionPane.showMessageDialog(this, "Color already in use! Please pick another");
+                } else {
+                    selectedColor = pickedColor;
+                    usedColors.add(pickedColor);
+                    colorDisplay.setBackground(pickedColor);
+                    colorDisplay.setText("Color Selected");
+                }
+            }
+        });
+
+        JButton addProcessButton = new JButton("Add Process");
+
+        addProcessButton.addActionListener(e -> {
+            try {
+
+                if (arrivalField.getText().isEmpty() || nameField.getText().isEmpty() || burstField.getText().isEmpty() || selectedColor == null) {
+                    JOptionPane.showMessageDialog(this, "Please fill in all required fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String name = nameField.getText();
+                int arrival = Integer.parseInt(arrivalField.getText());
+                int burst = Integer.parseInt(burstField.getText());
+
+                Process process = new Process(name, arrival, burst);
+                process.setColor(selectedColor);
+                processes.add(process);
+
+                taskTablePanel.addProcess(name, arrival, burst, selectedColor);
+
+                // reset inputs
+                nameField.setText("");
+                arrivalField.setText("");
+                burstField.setText("");
+                selectedColor = null;
+                colorDisplay.setBackground(Color.LIGHT_GRAY);
+                colorDisplay.setText("");
+                // usedColors.clear();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Invalid input for Shortest Job Scheduler.");
+            }
+        });
+
+        SJFPanel.add(colorButton);
+        SJFPanel.add(colorDisplay);
+        SJFPanel.add(addProcessButton);
+    
+        // Context Switch Button
+        JLabel contextSwitchLabel = new JLabel("Context Switch");
+        SJFPanel.add(contextSwitchLabel);
+        JTextField contextSwitchField = new JTextField();
+        SJFPanel.add(contextSwitchField);
+        JButton addContextSwitch = new JButton("Add Context Switch");
+        SJFPanel.add(addContextSwitch);
+
+        addContextSwitch.addActionListener(e -> {
+            if (contextSwitchField.getText().isEmpty())
+                return;
+            int contextSwitch = Integer.parseInt(contextSwitchField.getText());
+            ContextSwitch.contextSwitchTime = contextSwitch;
+            contextSwitchField.setText("");
+            contextSwitchLabel.setText("Context Switch: " + contextSwitch);
+        });
+        
+
+        cardPanel.add(SJFPanel, "SRTF");
+    }
+
+
+
     private void FCAIPanelInput() {
+
+        // TODO: Clear Process Table
+        
         FCAIPanel = new JPanel(new GridLayout(0, 6, 5, 5));
 
         FCAIPanel.add(new JLabel("Process Name"));
@@ -351,8 +414,9 @@ public class InputPanel extends JPanel {
 
                 FCAIProcess process = new FCAIProcess(name, arrival, burst, priority, quantum);
                 process.setColor(selectedColor);
-
                 processes.add(process);
+
+                taskTablePanel.addProcess(name, arrival, burst, selectedColor);
 
                 nameField.setText("");
                 arrivalField.setText("");
@@ -362,9 +426,7 @@ public class InputPanel extends JPanel {
                 selectedColor = null;
                 colorDisplay.setBackground(Color.LIGHT_GRAY);
                 colorDisplay.setText("");
-                usedColors.clear();
-                statusLabel.setText("Process added!");
-                statusLabel.setForeground(Color.BLUE);
+                // usedColors.clear();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid input for Priority Scheduler.");
             }
@@ -374,23 +436,22 @@ public class InputPanel extends JPanel {
         FCAIPanel.add(colorDisplay);
         FCAIPanel.add(addProcessButton);
         FCAIPanel.add(statusLabel);
-        
 
         cardPanel.add(FCAIPanel, "FCAI");
-
-        add(cardPanel, BorderLayout.CENTER);
-
-
-        schedulerComboBox.addActionListener(e -> {
-            String selectedAlgorithm = (String) schedulerComboBox.getSelectedItem();
-            cardLayout.show(cardPanel, selectedAlgorithm);
-
-            
-        });
     }
+
+
 
     public List<Process> getProcesses() {
         return processes;
+    }
+
+    public void clearProcesses() {
+        processes.clear();
+    }
+
+    public void clearUsedColors() {
+        usedColors.clear();
     }
 
     public String getSelectedAlgorithm() {

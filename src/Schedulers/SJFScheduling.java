@@ -55,6 +55,8 @@ public class SJFScheduling implements SchedulingStrategy {
 
                 System.out.println(shortestJob.getName() + " executes from " + startTime + " to " + endTime
                         + ", wait time: " + waitTime + ", turnaround time: " + turnaroundTime);
+                shortestJob.addTime(startTime);
+                shortestJob.addTime(endTime);
             }
             
             else 

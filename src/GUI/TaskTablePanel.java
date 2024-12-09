@@ -39,6 +39,13 @@ public class TaskTablePanel extends JPanel {
         tableModel.addRow(new Object[] {name, arrivalTime, burstTime, color});
     }
 
+    public void clearTable() {
+        System.out.println(tableModel.getRowCount());
+        for (int i = 0; i < tableModel.getRowCount(); i++) {
+            tableModel.removeRow(i);
+        }
+    }
+
     private static class ColorRenderer extends JLabel implements TableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(
