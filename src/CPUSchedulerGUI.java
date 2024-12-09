@@ -27,7 +27,7 @@ public class CPUSchedulerGUI extends JFrame {
         GanttChart ganttChart = new GanttChart();
         InputPanel inputPanel = new InputPanel(taskTablePanel, ganttChart);
 
-        ganttChart.setPreferredSize(new Dimension(2000, 400));
+        ganttChart.setPreferredSize(new Dimension(3000, 400));
 
         JScrollPane ganttScrollPane = new JScrollPane(ganttChart);
         ganttScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -42,8 +42,13 @@ public class CPUSchedulerGUI extends JFrame {
         add(inputPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
 
-        // add(ganttChart, BorderLayout.CENTER);
-        // add(taskTablePanel, BorderLayout.SOUTH);
+        JPanel schedulerInfoPanel = new JPanel(new GridLayout(2, 2, 2, 2));
+        JLabel avgWaitTimeLabel = new JLabel("Average Wait Time: ");
+        schedulerInfoPanel.add(avgWaitTimeLabel);
+        JLabel avgTurnaroundTimeLabel = new JLabel("Average Turnaround Time: ");
+        schedulerInfoPanel.add(avgTurnaroundTimeLabel);
+
+
 
         JButton runButton = new JButton("Run");
         runButton.addActionListener(e -> {
@@ -68,27 +73,14 @@ public class CPUSchedulerGUI extends JFrame {
                 scheduler.setStrategy(new FCAIScheduling()); 
             }
             scheduler.executeSchedule(processes);
-            // switch (inputPanel.getSelectedAlgorithm()) {
-            //     case "Priority Scheduling":
-            //         scheduler.setStrategy(new PriorityScheduling()); 
-            //         scheduler.executeSchedule(processes);
-            //         break;
-            //     case "SJF":
-            //         scheduler.setStrategy(new SJFScheduling());
-            //         scheduler.executeSchedule(processes);
-            //         break;
-            //     case "SRTF":
-            //         scheduler.setStrategy(new SRTFScheduling());
-            //         scheduler.executeSchedule(processes);
-            //         break;
-            //     case "FCAI":
-            //         scheduler.setStrategy(new FCAIScheduling());
-            //         scheduler.executeSchedule(processes);
-            //         break;
-            //     default:
-            //         break;
-            // }
+
+            // Update table with wait time and turnaround time
+            taskTablePanel.updateProcessInfo(processes);
+
             ganttChart.updateGanttChart(processes);
+
+            avgWaitTimeLabel.setText("Average Wait Time: " + scheduler.getAvgWaitTime());
+            avgTurnaroundTimeLabel.setText("Average Turnaround Time: " + scheduler.getAvgTurnaroundTime());
         });
         
 
@@ -97,15 +89,18 @@ public class CPUSchedulerGUI extends JFrame {
             taskTablePanel.clearTable();
             inputPanel.clearProcesses();
             inputPanel.clearUsedColors();
+            avgWaitTimeLabel.setText("Average Wait Time: ");
+            avgTurnaroundTimeLabel.setText("Average Turnaround Time: ");
         });
 
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(clearButton);
-        buttonPanel.add(runButton);
+        // JPanel buttonPanel = new JPanel();
+        schedulerInfoPanel.add(clearButton);
+        schedulerInfoPanel.add(runButton);
 
 
-        add(buttonPanel, BorderLayout.SOUTH);
+        add(schedulerInfoPanel, BorderLayout.SOUTH);
+        // add(buttonPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }

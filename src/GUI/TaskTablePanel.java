@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
+import java.util.List;
+import Processes.Process;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -17,7 +20,7 @@ public class TaskTablePanel extends JPanel {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("Process Info"));
 
-        String[] columnNames = {"Process Name", "Arrival Time", "Burst Time", "Color"};
+        String[] columnNames = {"Process Name", "Arrival Time", "Burst Time", "Color", "Wait Time", "Turnaround Time"};
 
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -39,6 +42,14 @@ public class TaskTablePanel extends JPanel {
 
     public void addProcess(String name, int arrivalTime, int burstTime, Color color) {
         tableModel.addRow(new Object[] {name, arrivalTime, burstTime, color});
+    }
+
+    public void updateProcessInfo(List<Process> processes) {
+        for (int i = 0; i < processes.size(); i++) {
+            Process process = processes.get(i);
+            tableModel.setValueAt(process.getWaitTime(), i, 4);
+            tableModel.setValueAt(process.getTurnaroundTime(), i, 5);
+        }
     }
 
     public void clearTable() {

@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class PriorityScheduling implements SchedulingStrategy {
+public class PriorityScheduling extends SchedulingStrategy {
     int context = ContextSwitch.contextSwitchTime;
     List<PriorityProcess> remainingProcesses = new ArrayList<>();   
     @Override
@@ -68,5 +68,8 @@ public class PriorityScheduling implements SchedulingStrategy {
 
         System.out.println("\nAverage Turnaround Time: " + avgTurnaroundTime);
         System.out.println("Average Wait Time: " + avgWaitTime);
+
+        setAverageTurnaroundTime(avgTurnaroundTime);
+        setAverageWaitTime(avgWaitTime);
     }
 }

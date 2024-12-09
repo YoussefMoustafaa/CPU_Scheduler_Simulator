@@ -13,4 +13,12 @@ public class Scheduler {
     public void executeSchedule(List<Process> processes) {
         strategy.schedule(processes);
     }
+
+    public double getAvgWaitTime() {
+        return strategy.getAverageWaitTime();
+    }
+
+    public double getAvgTurnaroundTime() {
+        return strategy.getAverageTurnaroundTime();
+    }
 }

@@ -5,7 +5,7 @@ import Processes.Process;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SRTFScheduling implements SchedulingStrategy {
+public class SRTFScheduling extends SchedulingStrategy {
     private static final int STARVATION_THRESHOLD = 10; 
 
     @Override
@@ -112,5 +112,8 @@ public class SRTFScheduling implements SchedulingStrategy {
         double avgTurnaroundTime = (double) totalTurnaroundTime / totalProcesses;
         System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
         System.out.println("Average Turnaround Time: " + avgTurnaroundTime);
+
+        setAverageTurnaroundTime(avgTurnaroundTime);
+        setAverageWaitTime(avgWaitingTime);
     }
 }

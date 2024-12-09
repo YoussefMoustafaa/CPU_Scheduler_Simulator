@@ -10,9 +10,8 @@ import java.util.Iterator;
 import Processes.FCAIProcess;
 import Processes.Process;
 
-public class FCAIScheduling implements SchedulingStrategy {
+public class FCAIScheduling extends SchedulingStrategy {
 
-    
     private FCAIProcess getProcessWithSmallestFCAIScore(Queue<FCAIProcess> readyQueue, int currentTime) {
         // Find the process with the smallest FCAI score among those that have arrived by currentTime
         return readyQueue.stream()
@@ -21,87 +20,126 @@ public class FCAIScheduling implements SchedulingStrategy {
             .orElse(null);  // If no process is found, return null
     }
 
-    private void printDetails(FCAIProcess p, int executedTime) {
-        System.out.println(p.getName() + " " + executedTime + " " + p.getBurstTime() + " " + p.getQuantum());
+    private void printDetails(FCAIProcess p, int executedTime , int starttime) {
+        System.out.println("Name : " + p.getName() + ", Time : " +starttime + "->" + (starttime+executedTime) + ", Executed time " + executedTime + ", Remaining Burst Time " + p.getBurstTime() + ", Quantum " + p.getQuantum() + ", FCAI score : " + p.getFCAIScore());
+        p.addTime(starttime);
+        p.addTime(starttime + executedTime);
     }
+
+    private void printProcessesInfo(List<Process> processes) {
+        double averageWaitTime = 0.0;
+        double averageTurnaroundTime = 0.0;
+        for (Process p : processes) {
+            System.out.println("Name : " + p.getName() + ": Wait Time = " + p.getWaitTime() + " - TurnAround Time = " + p.getTurnaroundTime());
+            averageWaitTime += p.getWaitTime();
+            averageTurnaroundTime += p.getTurnaroundTime();
+        }
+        averageWaitTime /= processes.size();
+        averageTurnaroundTime /= processes.size();
+        setAverageWaitTime(averageWaitTime);
+        setAverageTurnaroundTime(averageTurnaroundTime);
+        System.out.println("Average Wait Time = " + averageWaitTime);
+        System.out.println("Average Turnaround Time = " + averageTurnaroundTime);
+    }
+
     @Override
     public void schedule(List<Process> processes) {
-        processes.sort(Comparator.comparingInt(Process::getArrivalTime)); // Sort by arrival time
+        List<Process> FCAIProcessList = new ArrayList<>(processes);
+        FCAIProcessList.sort(Comparator.comparingInt(Process::getArrivalTime)); // Sort by arrival time
         Queue<FCAIProcess> arrivedQueue = new LinkedList<>();
         List<FCAIProcess> completedQueue = new ArrayList<>();
         int currentTime = 0;
-        int processeSize = processes.size();
-        int lastArrivalTime = processes.stream()
+        int startTime = 0;
+        int size = FCAIProcessList.size();
+        int lastArrivalTime = FCAIProcessList.stream()
                 .mapToInt(Process::getArrivalTime)
                 .max()
                 .orElse(0);
-        int maxBurstTime = processes.stream()
+        int maxBurstTime = FCAIProcessList.stream()
                 .mapToInt(Process::getBurstTime)
                 .max()
                 .orElse(0);
 
         double V1 = lastArrivalTime / 10.0;
         double V2 = maxBurstTime / 10.0;
-        // Start with the first process
-        FCAIProcess currentProcess = (FCAIProcess) processes.get(0);
+        FCAIProcess currentProcess = (FCAIProcess) FCAIProcessList.get(0);
         final String targetName = currentProcess.getName();
-        processes.removeIf(process -> process.getName().equals(targetName));
+        FCAIProcessList.removeIf(process -> process.getName().equals(targetName));
         
         int quantumTime = currentProcess.getQuantum();
         int burstTime = currentProcess.getBurstTime();
         int preemptionThreshold = (int) Math.ceil(quantumTime * 0.4) + currentTime;
         int executedTime = 0;
-        
-        while (completedQueue.size() < processeSize ) {
-            // Add processes that have arrived
-            Iterator<Process> iterator = processes.iterator();
+
+        while (completedQueue.size() < size) {
+            Iterator<Process> iterator = FCAIProcessList.iterator();
             while (iterator.hasNext()) {
                 Process p = iterator.next();
                 if (p instanceof FCAIProcess && p.getArrivalTime() <= currentTime && !p.isCompleted()) {
                     arrivedQueue.add((FCAIProcess) p);
-                    iterator.remove(); // Safely remove the process
+                    iterator.remove();
                 }
             }
-
-            // If burst time reaches 0, mark the process as completed
             if (burstTime == 0) {
+                int completionTime = currentTime;
+                currentProcess.setTurnaroundTime(completionTime - currentProcess.getArrivalTime());
+                currentProcess.setWaitTime(currentProcess.getTurnaroundTime() - currentProcess.getBurstTime());
+
                 currentProcess.DecreaseRemainingTime(executedTime);
                 currentProcess.setQuantum(currentProcess.getQuantum() + 2);
                 currentProcess.setBurstTime(burstTime);
                 currentProcess.calculateFCAIScore(V1, V2);
-                printDetails(currentProcess, executedTime);
+                printDetails(currentProcess, executedTime, startTime);
                 completedQueue.add(currentProcess);
                 currentProcess.setCompleted(true);
 
-                currentProcess = arrivedQueue.poll(); // Get the next process
+
+
+                currentProcess = arrivedQueue.poll();
+                if (currentProcess == null) {
+                    if (!FCAIProcessList.isEmpty()) {
+                        currentTime++;
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+
+                startTime = currentTime;
                 quantumTime = currentProcess.getQuantum();
                 burstTime = currentProcess.getBurstTime();
                 preemptionThreshold = (int) Math.ceil(quantumTime * 0.4) + currentTime;
                 executedTime = 0;
-                currentTime++;
-                executedTime++;
-                burstTime--;
                 continue;
             }
-            if(executedTime == quantumTime){
+
+            if (executedTime == quantumTime) {
                 currentProcess.DecreaseRemainingTime(executedTime);
                 currentProcess.setQuantum(currentProcess.getQuantum() + 2);
                 currentProcess.setBurstTime(burstTime);
                 currentProcess.calculateFCAIScore(V1, V2);
                 arrivedQueue.add(currentProcess);
-                printDetails(currentProcess, executedTime);
+                printDetails(currentProcess, executedTime, startTime);
+
                 currentProcess = arrivedQueue.poll();
+                if (currentProcess == null) {
+                    if (!FCAIProcessList.isEmpty()) {
+                        currentTime++;
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+
+                startTime = currentTime;
                 quantumTime = currentProcess.getQuantum();
                 burstTime = currentProcess.getBurstTime();
                 preemptionThreshold = (int) Math.ceil(quantumTime * 0.4) + currentTime;
                 executedTime = 0;
-                currentTime++;
-                executedTime++;
-                burstTime--;
                 continue;
             }
 
-            // Handle preemption or continue execution
+
             if (!arrivedQueue.isEmpty() && currentTime >= preemptionThreshold) {
                 FCAIProcess preemptingProcess = getProcessWithSmallestFCAIScore(arrivedQueue, currentTime);
                 if (preemptingProcess != null && preemptingProcess.getFCAIScore() < currentProcess.getFCAIScore()) {
@@ -110,25 +148,23 @@ public class FCAIScheduling implements SchedulingStrategy {
                     currentProcess.setBurstTime(burstTime);
                     currentProcess.calculateFCAIScore(V1, V2);
                     arrivedQueue.add(currentProcess);
-                    printDetails(currentProcess, executedTime);
+                    printDetails(currentProcess, executedTime, startTime);
                     arrivedQueue.remove(preemptingProcess);
+                    startTime = currentTime;
                     currentProcess = preemptingProcess;
                     quantumTime = currentProcess.getQuantum();
                     burstTime = currentProcess.getBurstTime();
                     preemptionThreshold = (int) Math.ceil(quantumTime * 0.4) + currentTime;
                     executedTime = 0;
-                    currentTime++;
-                    executedTime++;
-                    burstTime--;
                     continue;
                 }
             }
 
-
-            // Continue current process execution
+            
             currentTime++;
             executedTime++;
             burstTime--;
         }
+        printProcessesInfo(processes);
     }
 }

@@ -69,7 +69,7 @@ public class GanttChart extends JPanel {
 
         // Time settings
         int timeScale = 50; // Width of one time unit
-        int totalTime = 35; // Total time units
+        int totalTime = 56; // Total time units
 
         // Draw time scale
         g2d.setFont(new Font("Arial", Font.PLAIN, 12));

@@ -4,7 +4,7 @@ import Processes.Process;
 import java.util.List;
 import java.util.ArrayList;
 
-public class SJFScheduling implements SchedulingStrategy {
+public class SJFScheduling extends SchedulingStrategy {
     @Override
     public void schedule(List<Process> processes)
      {
@@ -81,7 +81,9 @@ public class SJFScheduling implements SchedulingStrategy {
 
         System.out.printf("Average wait time = %.1f\n", avgWaitTime);
         System.out.printf("Average turnaround time = %.2f\n", avgTurnaroundTime);
-        System.out.println("All processes are done ya zmeely.");
+
+        setAverageTurnaroundTime(avgTurnaroundTime);
+        setAverageWaitTime(avgWaitTime);
     }
 }
 
