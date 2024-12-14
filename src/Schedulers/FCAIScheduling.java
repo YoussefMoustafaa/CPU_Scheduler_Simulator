@@ -66,6 +66,8 @@ public class FCAIScheduling extends SchedulingStrategy {
         final String targetName = currentProcess.getName();
         FCAIProcessList.removeIf(process -> process.getName().equals(targetName));
         
+        currentTime = currentProcess.getArrivalTime();
+        startTime = currentProcess.getArrivalTime();
         int quantumTime = currentProcess.getQuantum();
         int burstTime = currentProcess.getBurstTime();
         int preemptionThreshold = (int) Math.ceil(quantumTime * 0.4) + currentTime;
